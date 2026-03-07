@@ -101,15 +101,21 @@ def get_value(stop):
     is_valid = False
     while not is_valid:
         if stop == 1: #Dokładność liczb po przecinku, zakładany przedział od 1 do 8
-            choice = int(input("Podaj wartość epsilon - dokładność liczb po przecinku").strip())
-            if 1 < choice < 8:
-                result = choice
-                is_valid = True
+            try:
+                choice = int(input("Podaj wartość epsilon - dokładność liczb po przecinku").strip())
+                if 1 < choice < 8:
+                    result = choice
+                    is_valid = True
+            except ValueError:
+                print("Niepoprawne")
         else:  #Liczba iteracji, zakładany przedział od 1 do 25
-            choice = int(input("Podaj wartość epsilon - ilość iteracji").strip())
-            if 1 < choice < 25:
-                result = choice
-                is_valid = True
+            try:
+                choice = int(input("Podaj wartość epsilon - ilość iteracji").strip())
+                if 1 < choice < 25:
+                    result = choice
+                    is_valid = True
+            except ValueError:
+                print("Niepoprawne")
     return result
 
 #metoda bisekcji

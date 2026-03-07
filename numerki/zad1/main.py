@@ -2,9 +2,8 @@ import math as m
 FUNCTIONS = {
     "1" : {
         "opis" : "Wielomian: x^4 - x^2 + 3x - 2",
-
-        "f" : lambda x: ((x * x - 1) * x + 3) * x - 2   #Policzenie Hornera
-        #TODO: Funckja obliczająca schemat Hornera automatycznie
+        "f" : lambda x: horner(x, FUNCTIONS["1"]["coeffs"], len(FUNCTIONS["1"]["coeffs"])),
+        "coeffs" : [4, 0, -1, 3, -2]
     },
     "2" : {
         "opis" : "Trygonometryczna: 2cos(0.5x) + 1",
@@ -118,11 +117,83 @@ def get_value(stop):
                 print("Niepoprawne")
     return result
 
+def horner(x,coeffs, length):
+    result = coeffs[0]
+    i =1
+    while i < length:
+        result = result * x + coeffs[i]
+    return result
 #metoda bisekcji
 
+def bisekcja(func, a, b, stop_type, stop_value):
+    #TODO zoptymalizować tę funkcję
+    #stop_type 1 - liczby po przecinku 2 - iteracja
+    #stop_valu epsilon - liczba iteracja lub ilosc liczb po przecinku
+    is_valid = False
+    iteration_count = 0
+    #Dane do oszacowanie wyniku
+    x_i_prev= a
+    x_i = a
+    epsilon = 1.0
+
+    #Zamienienie stop_value na dokładność np. 0.001
+    if stop_type == 1:
+        i = 0
+        while i < stop_value:
+            epsilon *= 0.1
+            i += 1
+    while not is_valid:
+        x_i_prev = x_i
+        x_i = (a + b) / 2
+        if stop_type ==1:
+            if abs(x_i - x_i_prev) < epsilon:
+                is_valid = True
+        else:
+            if iteration_count == (stop_value - 1):
+                is_valid = True
+        if func(x_i) == 0:
+            is_valid = True
+        #Szukamy gdzie iloczyn jest negatywny i ustawiamy nowy przedzia
+        if func(a) * func(x_i) < 0:
+            b = x_i
+        else:
+            a = x_i
+        iteration_count += 1
+    return x_i, iteration_count
 #reguła falsi
 
-#Oszacowanie dokładności wyniku
+def regula_falsi(func, a, b, stop_type, stop_value):
+    is_valid = False
+    iteration_count = 0
+
+    x_i_prev = a
+    x_i = a
+    epsilon = 1.0
+
+    # Zamienienie stop_value na dokładność np. 0.001
+    if stop_type == 1:
+        i = 0
+        while i < stop_value:
+            epsilon *= 0.1
+            i += 1
+    while not is_valid:
+        x_i_prev = x_i
+        x_i = a - (func(a) / (func(b) - func(a))) * (b - a)
+        if stop_type == 1:
+            if abs(x_i - x_i_prev) < epsilon:
+                is_valid = True
+        else:
+            if iteration_count == (stop_value - 1):
+                is_valid = True
+        if func(x_i) == 0:
+            is_valid = True
+        # Szukamy gdzie iloczyn jest negatywny i ustawiamy nowy przedzia
+        if func(a) * func(x_i) < 0:
+            b = x_i
+        else:
+            a = x_i
+        iteration_count += 1
+    return x_i, iteration_count
 
 #Narysowanie funckji i zapisanie
 
@@ -132,4 +203,4 @@ def main():
     f = function["f"]
     interval = get_interval(f) #Tablica 0 - start, 1 - end
     stop_condition = get_stopcondition() # Mamy integer 1-2
-    value = get_value(stop_condition)
+    epsilon = get_value(stop_condition)

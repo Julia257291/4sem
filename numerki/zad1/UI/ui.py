@@ -1,3 +1,4 @@
+from stałe.funkcje import FUNCTIONS, METHOD, STOP_CONDITION
 def get_function():
     is_valid = False
     choice = ""
@@ -11,7 +12,7 @@ def get_function():
             is_valid = True
         else:
             print("Nieprawidłowy wybór")
-    return FUNCTIONS[choice]
+    return FUNCTIONS[choice]["f"]
 
 def get_metod():
     choice = ""
@@ -25,7 +26,7 @@ def get_metod():
             is_valid = True
         else:
             print("Nieprawidłowy wybór")
-    return METHOD[choice]
+    return choice
 
 
 def get_interval(f):
@@ -43,11 +44,11 @@ def get_interval(f):
                     b = temp_b
                     is_valid = True
                 else:
-                    print("Błąd: Funkcja na końcach przedziału musi mieć różne znaki!")
+                    print("Funkcja na końcach przedziału musi mieć różne znaki!")
             else:
-                print("a musi być mniejsze od b!")
+                print("a musi być mniejsze od b")
         except ValueError:
-            print("Błąd: Podaj poprawne liczby")
+            print("Podaj poprawne liczby")
     return [a, b]
 
 def get_stopcondition():
@@ -70,7 +71,7 @@ def get_value(stop):
     while not is_valid:
         if stop == 1: #Dokładność liczb po przecinku, zakładany przedział od 1 do 8
             try:
-                choice = int(input("Podaj wartość epsilon - dokładność liczb po przecinku").strip())
+                choice = int(input("Podaj wartość epsilon dokładność liczb po przecinku").strip())
                 if 1 < choice < 8:
                     result = choice
                     is_valid = True
@@ -78,7 +79,7 @@ def get_value(stop):
                 print("Niepoprawne")
         else:  #Liczba iteracji, zakładany przedział od 1 do 25
             try:
-                choice = int(input("Podaj wartość epsilon - ilość iteracji").strip())
+                choice = int(input("Podaj wartość epsilon ilość iteracji").strip())
                 if 1 < choice < 25:
                     result = choice
                     is_valid = True

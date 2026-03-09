@@ -1,4 +1,6 @@
 import math as m
+from metody.metody import horner, bisekcja, regula_falsi
+
 FUNCTIONS = {
     "1" : {
         "opis" : "Wielomian: x^4 - x^2 + 3x - 2",
@@ -15,13 +17,13 @@ FUNCTIONS = {
     },
     "4" : {
         "opis" : "Złożona: sin(x^2) +3x -3",
-        "f" : lambda x: m.sin(x**2) + 3*x -3
+        "f" : lambda x: m.sin(x*x) + 3*x -3
     }
 }
 
 METHOD = {
-    "1" : "Metoda bisekcji",
-    "2" : "Reguła Falsi"
+    "1" : ("Metoda bisekcji", bisekcja),
+    "2" : ("Reguła Falsi", regula_falsi)
 }
 
 STOP_CONDITION = {

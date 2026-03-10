@@ -11,9 +11,6 @@ def main():
     stop_condition = get_stopcondition() # Mamy integer 1-2
     epsilon = get_value(stop_condition)
     root1, iters1 = find_zero(f, interval[0], interval[1], stop_condition, epsilon, method_func)
-    print(f"Uruchomiono: {method_name}")
-    print(f"Wynik: {root1}")
-    print(f"Liczba iteracji: {iters1}")
 
     if method == "1":
         other_method = "2"
@@ -22,8 +19,12 @@ def main():
 
     other_name = METHOD[other_method][0]
     other_func = METHOD[other_method][1]
-
     root2, iters2 = find_zero(f, interval[0], interval[1], stop_condition, epsilon, other_func)
+
+    print(f"Uruchomiono: {method_name}")
+    print(f"Wynik: {root1}")
+    print(f"Liczba iteracji: {iters1}")
+
     print(f"Uruchomiono: {other_name}")
     print(f"Wynik: {root2}")
     print(f"Liczba iteracji: {iters2}")

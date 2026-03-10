@@ -28,9 +28,8 @@ def draw_plot(x_vals, y_vals, roots):
     plt.title("Wykres funkcji i jej miejsc zerowych", fontsize=14)
     plt.xlabel("Oś X", fontsize=12)
     plt.ylabel("Wartość f(x)", fontsize=12)
-
-
-    # Dodanie delikatnej siatki
     plt.grid(True, linestyle=':', alpha=0.7)
     plt.tight_layout()
+    plt.legend()
+
     plt.show()

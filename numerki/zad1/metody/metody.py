@@ -11,7 +11,7 @@ def bisekcja(func, a, b):  #func jest potrzebne w falsi a tu zbędne ale żeby p
     return (a+b) / 2
 
 def regula_falsi(func ,a, b):
-    return a - (func(a) / (func(b) - func(a))) * (b - a)
+    return (a * func(b) - b * func(a)) / (func(b) - func(a))
 
 def find_zero(func, a, b, stop_type, stop_value, method_step_func):
     #method_step_func --> albo bisekcja albo reguła falsi

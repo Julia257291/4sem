@@ -71,7 +71,7 @@ def get_value(stop):
     while not is_valid:
         if stop == 1: #Dokładność liczb po przecinku, zakładany przedział od 1 do 18
             try:
-                choice = int(input("Podaj wartość epsilon dokładność liczb po przecinku").strip())
+                choice = int(input("Podaj wartość epsilon dokładność liczb po przecinku ").strip())
                 if 1 <= choice < 18:
                     result = choice
                     is_valid = True

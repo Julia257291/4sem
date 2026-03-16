@@ -69,15 +69,15 @@ def get_value(stop):
     result = 0
     is_valid = False
     while not is_valid:
-        if stop == 1: #Dokładność liczb po przecinku, zakładany przedział od 1 do 8
+        if stop == 1: #Dokładność liczb po przecinku, zakładany przedział od 1 do 18
             try:
                 choice = int(input("Podaj wartość epsilon dokładność liczb po przecinku").strip())
-                if 1 < choice < 18:
+                if 1 <= choice < 18:
                     result = choice
                     is_valid = True
             except ValueError:
                 print("Niepoprawne")
-        else:  #Liczba iteracji, zakładany przedział od 1 do 25
+        else:  #Liczba iteracji, zakładany przedział od 1 do 50
             try:
                 choice = int(input("Podaj wartość epsilon ilość iteracji").strip())
                 if 1 < choice < 50:

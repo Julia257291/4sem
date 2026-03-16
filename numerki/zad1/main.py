@@ -4,7 +4,7 @@ from wizualizajca.grafy import generate_plot_data, draw_plot
 from stałe.funkcje import METHOD
 def main():
     f = get_function()
-    method = get_metod()
+    method = get_metod() #Zwraca numer
     method_name =METHOD[method][0]
     method_func = METHOD[method][1]
     interval = get_interval(f) #Tablica 0 - start, 1 - end

@@ -6,7 +6,7 @@ def generate_plot_data(func, a, b, num_points=150):
     step = (b -a) / num_points
     x_current =a
     i = 0
-    while i <= num_points:
+    while i < num_points:
         x_vals.append(x_current)
         y_vals.append(func(x_current))
         x_current += step
@@ -19,10 +19,10 @@ def draw_plot(x_vals, y_vals, roots):
     plt.axhline(0, color='black', linewidth=1.2, linestyle='--')
     colors = ['red', 'green']
     i = 0
-    while i < len(roots):
-        c = colors[i % len(colors)]
-        plt.scatter([roots[i]], [0], color=c, zorder=5, s=70, edgecolors='black',
-                    label=f"Miejsce zerowe: {roots[i]:.4f}")
+    while i < 2:
+        c = colors[i]
+        plt.scatter([roots[i]], [0], color=c, zorder=5, s=75, edgecolors='black',
+                    label=f"Miejsce zerowe: {roots[i]:.8f}")
         i += 1
 
     plt.title("Wykres funkcji i jej miejsc zerowych", fontsize=14)

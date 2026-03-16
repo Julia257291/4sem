@@ -1,14 +1,25 @@
-from UI.ui import get_function, get_value, get_metod, get_interval, get_stopcondition
+"""
+AUTORZY:
+Patryk Gołacki
+Julia Szcześniak
+
+16.03.26
+"""
+# CTRL + ALT + L - formatowanie
+
+from UI.ui import *
 from metody.metody import find_zero
 from wizualizajca.grafy import generate_plot_data, draw_plot
 from stałe.funkcje import METHOD
+
+
 def main():
     f = get_function()
-    method = get_metod() #Zwraca numer
-    method_name =METHOD[method][0]
+    method = get_method()  # Zwraca numer
+    method_name = METHOD[method][0]
     method_func = METHOD[method][1]
-    interval = get_interval(f) #Tablica 0 - start, 1 - end
-    stop_condition = get_stopcondition() # Mamy integer 1-2
+    interval = get_interval(f)  # Tablica 0 - start, 1 - end
+    stop_condition = get_stopcondition()  # Mamy integer 1-2
     epsilon = get_value(stop_condition)
     root1, iters1 = find_zero(f, interval[0], interval[1], stop_condition, epsilon, method_func)
 
@@ -32,4 +43,6 @@ def main():
     x, y = generate_plot_data(f, interval[0], interval[1])
     draw_plot(x, y, roots=[root1, root2])
 
-main()
+
+if __name__ == "__main__":
+    main()

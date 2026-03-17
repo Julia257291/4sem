@@ -1,7 +1,7 @@
 """
 AUTORZY:
-Patryk Gołacki
-Julia Szcześniak
+Patryk Gołacki 257275
+Julia Szcześniak 257291
 
 16.03.26
 """
@@ -10,7 +10,7 @@ Julia Szcześniak
 from UI.ui import *
 from metody.metody import find_zero
 from wizualizajca.grafy import generate_plot_data, draw_plot
-from stałe.funkcje import METHOD
+from stałe.slowniki import METHOD
 
 
 def main():

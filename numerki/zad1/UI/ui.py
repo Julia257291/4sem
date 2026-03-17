@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from stałe.funkcje import FUNCTIONS, METHOD, STOP_CONDITION
+from stałe.slowniki import FUNCTIONS, METHOD, STOP_CONDITION
 
 
 def get_function() -> Callable[[float], float]:
@@ -87,8 +87,8 @@ def get_value(stop) -> int:
                 print("Niepoprawne")
         else:  # Liczba iteracji
             try:
-                choice = int(input("Podaj wartość epsilon (ilość iteracji): ").rstrip())
-                if 1 < choice:
+                choice = int(input("Podaj ilość iteracji: ").rstrip())
+                if 1 <= choice:
                     result = choice
                     is_valid = True
                 else:

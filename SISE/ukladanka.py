@@ -54,6 +54,17 @@ def get_neighbors(board, rows, columns, order="LUDR"):
             neighbors.append((temp_board, move))
     return neighbors
 
+def reconstruct_path(came_from, current_state):
+    """Zwróci drogę potrzebną do rozwiązania układanki"""
+    path = []
+    while current_state in came_from:
+        parent, move = came_from[current_state]
+        if move is None: break # Dotarliśmy do startu
+        path.append(move)
+        current_state = parent
+    path.reverse()
+    return "".join(path)
+
 if __name__ == "__main__":
     rows, cols = 4, 4
     target = get_target_board(rows, cols)

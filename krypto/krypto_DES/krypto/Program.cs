@@ -3,7 +3,7 @@
     /*Przygotowanie głównego klucza, zmniejsza rozmiar z 64 bitów na 56
      * (odrzuca najmniej ważny bit - bity parzystości) i miesza pozostałe bity, wynik będzie dalej
      używany do generowania 16 podkluczy*/
-    private byte[] rundkey = new byte[]{
+    private byte[] roundkey = new byte[]{
         57, 49, 41, 33, 25, 17, 9,
         1, 58, 50, 42, 34, 26, 18,
         10, 2, 59, 51, 43, 35, 27,
@@ -233,7 +233,7 @@
     private byte[][] Generate16Keys(byte[] mainKey64bits)
     {
         byte[][] subkeys = new byte[16][];
-        byte[] key56bits = Permutate(mainKey64bits, rundkey); //Zmniejszamy rozmiar klucza z 64 bitów do 56
+        byte[] key56bits = Permutate(mainKey64bits, roundkey); //Zmniejszamy rozmiar klucza z 64 bitów do 56
 
         byte[][] halves = DivideFragments(key56bits); //Dzielimy klucz na dwie połowy
         byte[] left = halves[0];
@@ -247,6 +247,60 @@
         }
         return subkeys;
     }
-}
 
+    // Zamienia dowolną tablicę bitów na jedną liczbę dziesiętną, używana do obliczania wiersza i kolumny w S-Boxach
+    private int BitToInt(byte[] input)
+    {
+        int result = 0;
+        for (int i = 0; i < input.Length; i++)
+        {
+            result = (result << 1) + input[i];
+        }
+        return result;
+    }
+
+    // Zamienia liczbę z S-Boxa (0-15) na tablicę dokładnie 4 bitów, używana do zamiany wyniku z S-Boxów na bity, które będą dalej permutowane
+    private byte[] IntToBit(int integerNum)
+    {
+        byte[] bity = new byte[4];
+        for (int i = 3; i >= 0; i--) // po Sbox mamy 4 bity, więc iterujemy od 3 do 0
+        {
+            bity[i] = (byte)(integerNum % 2);
+            integerNum /= 2;
+        }
+        return bity;
+    }
+
+    //Funkcja działa wewnątrz każdej z 16 rund szyfrowania, otrzymuje 32 bity i 48 bitów podklucza,
+    ///wykonuje operację XOR, dzieli wynik na 8 grup po 6 bitów, zamienia je na 4 bity za pomocą S- Boxów
+    ///a następnie permutuje otrzymane 32 bity
+    private byte[] FunctionInRounds(byte[] right32bit, byte[] roundKey48bit) {
+        byte[] expandedRight = Permutate(right32bit, expansion_permutation); //Rozszerzamy z 32 bitów na 48
+        byte[] afterXOR = XOR(expandedRight, roundKey48bit); //Operacja XOR z podkluczem
+        byte[] output = new byte[32];
+        for (int i = 0; i < 8; i++)
+        {
+            byte[] sixBits = new byte[6];
+            for (int j = 0; j < 6; j++)
+            {
+                sixBits[j] = afterXOR[i * 6 + j];
+            }
+            int row = BitToInt(new byte[] { sixBits[0], sixBits[5] });
+            int col = BitToInt(new byte[] { sixBits[1], sixBits[2], sixBits[3], sixBits[4] });
+            int sBoxValue = SBox[i][row * 16 + col];
+            byte[] fourBits = IntToBit(sBoxValue);
+            for (int j = 0; j < 4; j++)
+            {
+                output[i * 4 + j] = fourBits[j];
+            }
+        }
+        return Permutate(output, pbox_permutation);
+    }
+
+    //TODO: Funkcja przetwarzająca cały blok 64-bitowy, wykonująca 16 rund szyfrowania i zwracająca zaszyfrowany blok
+    //Funkcja przetwarzająca cały blok 64-bitowy, wykonująca 16 rund deszyfrowania i zwracająca odszyfrowany blok
+    // Automatyczne generowanie klucza lub wpisywanie samemu z pilnowaniem, że ma 64 bity (8 znaków)
+    //Dodawanie paddingu jeśli wiadomość nie jest idealnie podzielna na bloki 64-bitowe, usuwanie paddingu po odszyfrowaniu
+    //GUI do wpisywania wiadomości, klucza, wybierania szyfrowania lub deszyfrowania, wyświetlania wyników, zapisywania do pliku i odczytywania z pliku
+}
 

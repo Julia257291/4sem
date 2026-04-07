@@ -1,8 +1,8 @@
 ﻿class DES
 {
     /*Przygotowanie głównego klucza, zmniejsza rozmiar z 64 bitów na 56
-     * (odrzuca najmniej ważny bit - bity parzystości) i miesza pozostałe bity, będzie dalej
-     używana do generowania 16 podkluczy*/
+     * (odrzuca najmniej ważny bit - bity parzystości) i miesza pozostałe bity, wynik będzie dalej
+     używany do generowania 16 podkluczy*/
     private byte[] rundkey = new byte[]{
         57, 49, 41, 33, 25, 17, 9,
         1, 58, 50, 42, 34, 26, 18,
@@ -123,63 +123,130 @@
         35, 3, 43, 11, 51, 19, 59, 27,
         34, 2, 42, 10, 50, 18, 58, 26,
         33, 1, 41, 9, 49, 17, 57, 25};
-   
-private byte[] ByteToBit(byte[] input)
-{
-    byte[] output = new byte[input.Length * 8]; //Wiadomość --> UTF8 - od 0 do 255, czyli 8 bitów na znak
-    for (int i = 0; i < input.Length; i++)
+
+    private byte[] ByteToBit(byte[] input)
     {
-        int number = input[i]; //int bo dzielenie
-        for (int j = 7; j >= 0; j--)
+        byte[] output = new byte[input.Length * 8]; //Wiadomość --> UTF8 - od 0 do 255, czyli 8 bitów na znak
+        for (int i = 0; i < input.Length; i++)
         {
-            output[i * 8 + j] = (byte)(number % 2);
-            number = number / 2;
+            int number = input[i]; //int bo dzielenie
+            for (int j = 7; j >= 0; j--)
+            {
+                output[i * 8 + j] = (byte)(number % 2);
+                number = number / 2;
+            }
         }
+        return output;
     }
-    return output;
+
+    //Zamieniamy bity z powrotem na bajty, dzieląc je na grupy po 8, obliczając wartość po zaszyfrowaniu
+    private byte[] BitsToBytes(byte[] input)
+    {
+        byte[] output = new byte[input.Length / 8];
+        for (int i = 0; i < output.Length; i++)
+        {
+            int number = 0;
+            for (int j = 0; j < 8; j++)
+            {
+                number = (number << 1) + input[i * 8 + j];
+            }
+            output[i] = (byte)number;
+        }
+        return output;
+    }
+
+    private byte[] XOR(byte[] a, byte[] b) //0 jeśli bity są takie same, 1 jeśli różne
+    {
+        byte[] wynik = new byte[a.Length];
+
+        for (int i = 0; i < a.Length; i++)
+        {
+            if (a[i] == b[i])
+            {
+                wynik[i] = 0;
+            }
+            else
+            {
+                wynik[i] = 1;
+            }
+        }
+        return wynik;
+    }
+
+    private byte[] Permutate(byte[] input, byte[] table) //Zamienia bity według określonego wzoru w tabeli
+    {
+        byte[] output = new byte[table.Length];
+        for (int i = 0; i < table.Length; i++)
+        {
+            output[i] = input[table[i] - 1];
+        }
+        return output;
+
+    }
+
+    // Przesuwa bity w lewo o określoną liczbę miejsc, używane do generowania podkluczy
+    private byte[] LeftShift(byte[] input, byte shifts)
+    {
+        byte[] output = new byte[input.Length];
+        for (int i = 0; i < input.Length; i++)
+        {
+            byte newIndex = (byte)((i + shifts) % input.Length);
+            output[i] = input[newIndex];
+        }
+        return output;
+    }
+
+    //Wykorzystywany przy generowaniu podkluczy oraz po 16 rundach szyfrowania, łączy dwie połowy bitów w jedną całość
+    private byte[] ConnectTables(byte[] left, byte[] right)
+    {
+        byte[] output = new byte[left.Length + right.Length];
+        for (int i = 0; i < left.Length; i++)
+        {
+            output[i] = left[i];
+        }
+        for (int i = 0; i < right.Length; i++)
+        {
+            output[left.Length + i] = right[i];
+        }
+        return output;
+    }
+
+    //Dzieli blok na dwa fragmenty, używane przy rundach oraz generowaniu podkluczy
+    //zwraca tablicę z dwoma elementami, gdzie każdy element to jedna połowa bitów
+    // byte[][] polowki = DivideFragments(blok);
+    // byte[] lewa = polowki[0];
+    // byte[] prawa = polowki[1];
+    private byte[][] DivideFragments(byte[] input)
+    {
+        int fragmentSize = input.Length / 2;
+        byte[] left = new byte[fragmentSize];
+        byte[] right = new byte[fragmentSize];
+
+        for (int i = 0; i < fragmentSize; i++)
+        {
+            left[i] = input[i];
+            right[i] = input[i + fragmentSize];
+        }
+        return new byte[][] { left, right };
+    }
+
+    private byte[][] Generate16Keys(byte[] mainKey64bits)
+    {
+        byte[][] subkeys = new byte[16][];
+        byte[] key56bits = Permutate(mainKey64bits, rundkey); //Zmniejszamy rozmiar klucza z 64 bitów do 56
+
+        byte[][] halves = DivideFragments(key56bits); //Dzielimy klucz na dwie połowy
+        byte[] left = halves[0];
+        byte[] right = halves[1];
+        for (int i = 0; i < 16; i++)
+        {
+            left = LeftShift(left, rotation[i]); //Rotacja w lewo o określoną liczbę miejsc
+            right = LeftShift(right, rotation[i]); //To samo dla prawej połowy
+            byte[] combinedKey = ConnectTables(left, right); //Łączymy obie połowy
+            subkeys[i] = Permutate(combinedKey, compression_pbox); //Kompresujemy do 48 bitów, pomijając część bitów
+        }
+        return subkeys;
+    }
 }
 
-//Zamieniamy bity z powrotem na bajty, dzieląc je na grupy po 8, obliczając wartość po zaszyfrowaniu
-private byte[] BitsToBytes(byte[] input)
-{
-    byte[] output = new byte[input.Length / 8];
-    for (int i = 0; i < output.Length; i++)
-    {
-        int number = 0;
-        for (int j = 0; j < 8; j++)
-        {
-            number = (number << 1) + input[i * 8 + j];
-        }
-        output[i] = (byte)number;
-    }
-    return output;
-}
 
-private byte[] XOR(byte[] a, byte[] b) //0 jeśli bity są takie same, 1 jeśli różne
-{
-    byte[] wynik = new byte[a.Length];
-
-    for (int i = 0; i < a.Length; i++)
-    {
-        if (a[i] == b[i])
-        {
-            wynik[i] = 0;
-        }
-        else
-        {
-            wynik[i] = 1;
-        }
-    }
-    return wynik;
-}
-
-private byte[] Permutate(byte[] input, byte[] table)
-{
-    byte[] output = new byte[table.Length];
-    for (int i = 0; i < table.Length; i++)
-    {
-        output[i] = input[table[i] - 1];
-    }
-    return output;
-
-    }

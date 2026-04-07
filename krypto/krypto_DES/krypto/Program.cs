@@ -124,5 +124,62 @@
         34, 2, 42, 10, 50, 18, 58, 26,
         33, 1, 41, 9, 49, 17, 57, 25};
    
+private byte[] ByteToBit(byte[] input)
+{
+    byte[] output = new byte[input.Length * 8]; //Wiadomość --> UTF8 - od 0 do 255, czyli 8 bitów na znak
+    for (int i = 0; i < input.Length; i++)
+    {
+        int number = input[i]; //int bo dzielenie
+        for (int j = 7; j >= 0; j--)
+        {
+            output[i * 8 + j] = (byte)(number % 2);
+            number = number / 2;
+        }
+    }
+    return output;
 }
 
+//Zamieniamy bity z powrotem na bajty, dzieląc je na grupy po 8, obliczając wartość po zaszyfrowaniu
+private byte[] BitsToBytes(byte[] input)
+{
+    byte[] output = new byte[input.Length / 8];
+    for (int i = 0; i < output.Length; i++)
+    {
+        int number = 0;
+        for (int j = 0; j < 8; j++)
+        {
+            number = (number << 1) + input[i * 8 + j];
+        }
+        output[i] = (byte)number;
+    }
+    return output;
+}
+
+private byte[] XOR(byte[] a, byte[] b) //0 jeśli bity są takie same, 1 jeśli różne
+{
+    byte[] wynik = new byte[a.Length];
+
+    for (int i = 0; i < a.Length; i++)
+    {
+        if (a[i] == b[i])
+        {
+            wynik[i] = 0;
+        }
+        else
+        {
+            wynik[i] = 1;
+        }
+    }
+    return wynik;
+}
+
+private byte[] Permutate(byte[] input, byte[] table)
+{
+    byte[] output = new byte[table.Length];
+    for (int i = 0; i < table.Length; i++)
+    {
+        output[i] = input[table[i] - 1];
+    }
+    return output;
+
+    }

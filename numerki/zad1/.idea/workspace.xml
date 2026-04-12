@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="f46ec0e2-b222-4b6b-86a3-69dc6145a853" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../SISE/bfs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SISE/dfs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SISE/heurystyka.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SISE/ukladanka.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../krypto/krypto_DES/krypto/Program.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../zad2/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../zad2/gauss_elimination.py" beforeDir="false" afterPath="$PROJECT_DIR$/../zad2/gauss_elimination.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../zad2/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../zad2/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../zad2/matrix_load.py" beforeDir="false" afterPath="$PROJECT_DIR$/../zad2/matrix_load.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Patlyk&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Julia257291/4sem.git&quot;,
+    &quot;accountId&quot;: &quot;f8335a49-765f-4e85-9013-2943b53f02c8&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="3CD5R14O9fiOJJjrxN8GTqjZk9a" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "ai.playground.ignore.import.keys.banner.in.settings": "true",
+    "git-widget-placeholder": "main",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PY-253.31033.139" />
+        <option value="bundled-python-sdk-2653e85de345-6d6dccd035ac-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.31033.139" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f46ec0e2-b222-4b6b-86a3-69dc6145a853" name="Changes" comment="" />
+      <created>1775907290664</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1775907290664</updated>
+      <workItem from="1775907293044" duration="259000" />
+      <workItem from="1775907561759" duration="3000" />
+      <workItem from="1775907608129" duration="25000" />
+      <workItem from="1775907900618" duration="249000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

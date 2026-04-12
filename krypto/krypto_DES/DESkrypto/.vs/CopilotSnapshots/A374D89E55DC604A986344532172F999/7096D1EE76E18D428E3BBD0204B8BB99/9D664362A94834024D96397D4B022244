@@ -1,0 +1,88 @@
+﻿namespace DESkrypto
+{
+    public partial class Form1 : Form
+    {
+        string? filePathToEncrypt;
+        string? filePathToDecrypt;
+        public Form1()
+        {
+            InitializeComponent();
+            comboBox1.SelectedIndex = 0;
+            panel1.Visible = true;
+            panel2.Visible = false;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedIndex == 0)
+            {
+                panel1.Visible = true;
+                panel2.Visible = false;
+            }
+            else if (comboBox1.SelectedIndex == 1)
+            {
+                panel1.Visible = false;
+                panel2.Visible = true;
+            }
+        }
+
+        private void EncryptFileChooseButton_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                filePathToEncrypt = openFileDialog1.FileName;
+                label1.Text = filePathToEncrypt;
+            }
+        }
+
+        private void DecryptFileChooseButton_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                filePathToDecrypt = openFileDialog1.FileName;
+                label2.Text = filePathToDecrypt;
+            }
+        }
+
+        private void EncryptButton_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(filePathToEncrypt))
+            {
+                MessageBox.Show("Tu algorym szyfrujacy memento, plik:" + filePathToEncrypt);
+            }
+            else
+            {
+                MessageBox.Show("Wybierz plik do zaszyfrowania");
+            }   
+        }
+
+        private void DecryptButton_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(filePathToDecrypt))
+            {
+                MessageBox.Show("Tu algorym deszyfrujacy memento, plik:" + filePathToDecrypt);
+            }
+            else
+            {
+                MessageBox.Show("Wybierz plik do zaszyfrowania");
+            }
+        }
+
+        private void TextEncriptButton_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(textBox1.Text))
+            {
+                MessageBox.Show("Tu algorym szyfrujacy memento, Tekst: " + textBox1.Text);
+            }
+            else
+            {
+                MessageBox.Show("Wpisz teskt do zaszyfrowania");
+            }
+        }
+
+        private void TextDecriptButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Tu algorym deszyfrujacy memento, Tekst: " + textBox2.Text);
+        }
+    }
+}

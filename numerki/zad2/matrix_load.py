@@ -1,9 +1,9 @@
 def load_matrix_from_file(filename):
     matrix = []
-    with open(filename, 'r') as f: #otwieramy plik w read mode
+    with open(filename, 'r') as f:  # otwieramy plik w read mode
         for line in f:
             row = []
-            parts = line.split() #Rozłączamy części pliku na osobne wyrazy
+            parts = line.split()  # Rozłączamy części pliku na osobne wyrazy
             for part in parts:
                 row.append(float(part))
             matrix.append(row)

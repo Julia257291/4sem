@@ -1,3 +1,14 @@
+/*---------------------------
+
+AUTORZY:
+Patryk Gołacki 257275
+Julia Szcześniak 257291
+
+13.04.26
+
+----------------------------*/
+
+using System;
 using System.Text;
 using System.Web;
 
@@ -54,9 +65,13 @@ namespace DESkrypto
             {
                 if (!String.IsNullOrEmpty(textBox4.Text))
                 {
-                    string outputPath = filePathToEncrypt + ".des";
-                    ProcessFile(filePathToEncrypt, outputPath, StringToByteArray(textBox4.Text), true);
-                    MessageBox.Show("Zaszyfrowano do:" + outputPath);
+                    if (textBox4.Text.Length == 8)
+                    {
+                        string outputPath = filePathToEncrypt + ".des";
+                        ProcessFile(filePathToEncrypt, outputPath, StringToByteArray(textBox4.Text), true);
+                        MessageBox.Show("Zaszyfrowano do:" + outputPath);
+                    }
+                    else MessageBox.Show("Klucz powinien miec dokladnie 8 znakow");
                 }
                 else
                 {
@@ -75,24 +90,28 @@ namespace DESkrypto
             {
                 if (!String.IsNullOrEmpty(textBox4.Text))
                 {
-                    if (!filePathToDecrypt.EndsWith(".des"))
+                    if (textBox4.Text.Length == 8)
                     {
-                        MessageBox.Show("Podaj plik z roozszerzeniem .des ");
-                    }
-                    else
-                    {
-                        string filePath = filePathToDecrypt.Substring(0, filePathToDecrypt.Length - 4);
-                        string directory = Path.GetDirectoryName(filePath);
-                        string fileNameOnly = Path.GetFileNameWithoutExtension(filePath);
-                        string extension = Path.GetExtension(filePath);
+                        if (!filePathToDecrypt.EndsWith(".des"))
+                        {
+                            MessageBox.Show("Podaj plik z roozszerzeniem .des ");
+                        }
+                        else
+                        {
+                            string filePath = filePathToDecrypt.Substring(0, filePathToDecrypt.Length - 4);
+                            string directory = Path.GetDirectoryName(filePath);
+                            string fileNameOnly = Path.GetFileNameWithoutExtension(filePath);
+                            string extension = Path.GetExtension(filePath);
 
-                        // 4. Składamy nową nazwę: katalog + nazwa + przyrostek + rozszerzenie
-                        // Wynik: "C:\foto\wakacje_kopia.png"
-                        string newFileName = fileNameOnly + "_odszyfrowane" + extension;
-                        string outputPath = Path.Combine(directory, newFileName);
-                        ProcessFile(filePathToDecrypt, outputPath, StringToByteArray(textBox4.Text), false);
-                        MessageBox.Show("Odszyfrowano do:" + outputPath);
+                            // 4. Składamy nową nazwę: katalog + nazwa + przyrostek + rozszerzenie
+                            // Wynik: "C:\foto\wakacje_kopia.png"
+                            string newFileName = fileNameOnly + "_odszyfrowane" + extension;
+                            string outputPath = Path.Combine(directory, newFileName);
+                            ProcessFile(filePathToDecrypt, outputPath, StringToByteArray(textBox4.Text), false);
+                            MessageBox.Show("Odszyfrowano do:" + outputPath);
+                        }
                     }
+                    else MessageBox.Show("Klucz powinien miec dokladnie 8 znakow");
                 }
                 else
                 {
@@ -111,7 +130,8 @@ namespace DESkrypto
             {
                 if (!String.IsNullOrEmpty(textBox3.Text))
                 {
-                    textBox2.Text = Convert.ToBase64String(des.Encrypt(StringToByteArray(textBox1.Text), StringToByteArray(textBox3.Text)));
+                    if (textBox3.Text.Length == 8) textBox2.Text = Convert.ToBase64String(des.Encrypt(StringToByteArray(textBox1.Text), StringToByteArray(textBox3.Text)));
+                    else MessageBox.Show("Klucz powinien miec dokladnie 8 znakow");
                 }
                 else
                 {
@@ -130,7 +150,8 @@ namespace DESkrypto
             {
                 if (!String.IsNullOrEmpty(textBox3.Text))
                 {
-                    textBox1.Text = Encoding.UTF8.GetString(des.Decrypt(Convert.FromBase64String(textBox2.Text), StringToByteArray(textBox3.Text)));
+                    if (textBox3.Text.Length == 8) textBox1.Text = Encoding.UTF8.GetString(des.Decrypt(Convert.FromBase64String(textBox2.Text), StringToByteArray(textBox3.Text)));
+                    else MessageBox.Show("Klucz powinien miec dokladnie 8 znakow");
                 }
                 else
                 {

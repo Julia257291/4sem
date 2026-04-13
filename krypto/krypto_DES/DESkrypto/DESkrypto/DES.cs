@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*---------------------------
+
+AUTORZY:
+Patryk Gołacki 257275
+Julia Szcześniak 257291
+
+13.04.26
+
+----------------------------*/
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 

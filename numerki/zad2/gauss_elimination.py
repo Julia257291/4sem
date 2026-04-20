@@ -1,8 +1,8 @@
 def find_biggest_row(matrix, column, length):
     max_value = 0.0
-    best_row = column
-    for row in range(column, length):  # zaczynamy od kolumny przekazanej, żeby nie powtarzać obliczeń
-        if abs(matrix[row][column]) > max_value:
+    best_row = column #bo idziemy po przekątnej więc to samo
+    for row in range(column, length):  # zaczynamy od kolumny przekazanej
+        if abs(matrix[row][column]) > max_value: #Sprawdzamy wartości w tej kolumnie w innych rzędach
             max_value = abs(matrix[row][column])
             best_row = row
     return best_row
@@ -15,15 +15,14 @@ def change_rows(matrix, row1, row2):
         matrix[row2] = temp
 
 
-def eliminate(macierz, wiersz_glowny, obecna_kolumna, liczba_wierszy):
-    element_glowny = macierz[wiersz_glowny][obecna_kolumna]
+def eliminate(matrix, main_row, current_column, num_rows):
+    main_element = matrix[main_row][current_column] #element główny którym będziemy eliminiować
 
-    if abs(element_glowny) > 1e-9:  # Upewniamy się, że nie dzielimy przez zero
-        for wiersz_docelowy in range(wiersz_glowny + 1, liczba_wierszy):
-            mnoznik = macierz[wiersz_docelowy][obecna_kolumna] / element_glowny
-            for kolumna in range(obecna_kolumna, liczba_wierszy + 1):
-                macierz[wiersz_docelowy][kolumna] -= mnoznik * macierz[wiersz_glowny][kolumna]
-
+    if abs(main_element) > 1e-9:  # Upewniamy się, że nie dzielimy przez zero
+        for target_row in range(main_row + 1, num_rows):
+            coefficient = matrix[target_row][current_column] / main_element #mnożnik
+            for column in range(current_column, num_rows + 1):
+                matrix[target_row][column] -= coefficient * matrix[main_row][column]
 
 def eliminacja_gaussa(matrix):
     matrix_len = len(matrix)  # Liczba wierszy
@@ -39,17 +38,16 @@ def backward_substitution(matrix):
     matrix_len = len(matrix)
     x = [0.0] * matrix_len
     status = "OZNACZONY"
-    for row in range(matrix_len - 1, -1, -1):
+    for row in range(matrix_len - 1, -1, -1): #Od samego dołu
         all_zeros = True
-        for col in range(matrix_len):
+        for col in range(matrix_len): #Sprawdzamy czy w ostatnim rzędzie są same zera
             if abs(matrix[row][col]) > 1e-9:
                 all_zeros = False
         if all_zeros:
-            if abs(matrix[row][matrix_len]) > 1e-9:
+            if abs(matrix[row][matrix_len]) > 1e-9: #Sprzawdzamy czy np. 0 = 5
                 status = "SPRZECZNY"
             else:
-                if status != "SPRZECZNY":
-                    status = "NIEOZNACZONY"
+                status = "NIEOZNACZONY"
         else:
             if status == "OZNACZONY":
                 suma_podstawien = 0.0

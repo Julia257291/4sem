@@ -7,4 +7,4 @@ def load_matrix_from_file(filename):
             for part in parts:
                 row.append(float(part))
             matrix.append(row)
-        return matrix
+        return matrix #Mamy postać [['1','2','3'],['4','5','6']]

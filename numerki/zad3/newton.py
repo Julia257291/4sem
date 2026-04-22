@@ -5,10 +5,21 @@ def evaluate_newton(coefficients, x, x_nodes):
     i = 1
     result = coefficients[0]
     while i < length:
-        product *= (x - x_nodes[i])
-        result += coefficients[1] * product
-        i+= 1
+        product *= (x - x_nodes[i - 1])
+        result += coefficients[i] * product
+        i += 1
     return result
 
-def calculate_coefficients():
-    pass
+def calculate_coefficients(x,y):
+    n = len(x)
+    coeffs = list(y)
+    j = 1
+    while j < n:
+        k = n - 1
+        while k >= j:
+            licznik = coeffs[k] - coeffs[k - 1]
+            mianownik = x[k] - x[k - j]
+            coeffs[k] = licznik / mianownik
+            k -= 1
+        j += 1
+    return coeffs

@@ -1,8 +1,9 @@
 from collections import deque
 from ukladanka import *
 
+
 def bfs(initial_board, rows, cols, order="LUDR"):
-    s = tuple(tuple(row) for row in initial_board) #Zmieniamy na tuple
+    s = tuple(tuple(row) for row in initial_board)  # Zmieniamy na tuple
     goal = get_target_board(rows, cols)
     if s == goal:
         return "", 1, 0, 0  # path, odwiedzone, przetworzone, głębokość
@@ -19,12 +20,12 @@ def bfs(initial_board, rows, cols, order="LUDR"):
         processed_count += 1
         max_depth = max(max_depth, depth)
         for neighbour, move in get_neighbors(v, rows, cols, order):
-            if neighbour not in visited:  #Sprawdzamy czy ukladanka byla juz odwiedzona
+            if neighbour not in visited:  # Sprawdzamy czy ukladanka byla juz odwiedzona
                 if neighbour == goal:
                     came_from[neighbour] = v, move
-                    path = reconstruct_path(came_from, neighbour) #Odbudowujemy drogę
+                    path = reconstruct_path(came_from, neighbour)  # Odbudowujemy drogę
                     return path, len(visited) + 1, processed_count, depth + 1
-                visited.add(neighbour) #Dodajemy sąsiada do odwiedzonych
-                came_from[neighbour] = v, move # Dodajemy do listy skąd przyszliśmy
+                visited.add(neighbour)  # Dodajemy sąsiada do odwiedzonych
+                came_from[neighbour] = v, move  # Dodajemy do listy skąd przyszliśmy
                 Q.append((neighbour, depth + 1))
     return "-1", 0, 0, 0

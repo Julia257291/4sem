@@ -1,4 +1,6 @@
 from ukladanka import *
+
+
 def dfs(initial_board, rows, cols, order="LUDR"):
     s = tuple(tuple(row) for row in initial_board)
     goal = get_target_board(rows, cols)

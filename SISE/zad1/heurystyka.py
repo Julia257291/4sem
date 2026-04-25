@@ -1,5 +1,6 @@
 from ukladanka import get_target_board
 
+
 def get_target_positions(rows, cols):
     """Tworzy słownik {wartość: (wiersz, kolumna)} dla stanu docelowego."""
     target_board = get_target_board(rows, cols)
@@ -9,6 +10,7 @@ def get_target_positions(rows, cols):
             val = target_board[r][c]
             positions[val] = (r, c)
     return positions
+
 
 def heuristic_manhattan(board, rows, cols, target_positions):
     """Liczy jak daleko pola są od swoich prawidłowych miejsc, suma kroków, aby dotrzeć do celu"""

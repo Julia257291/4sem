@@ -1,16 +1,21 @@
-def load_nodes(file, function):
-    """Pobiera z pliku węzły x i na podstawie przekazanej funkcji
-    oblicza wartość w y"""
-    x_nodes = []
-    y_nodes = []
-    with open(file, 'r') as f:
+from typing import Callable
+
+
+def load_nodes(file_path: str, function: Callable[[float], float]) -> tuple[list[float], list[float]]:
+    x_nodes: list[float] = []
+    y_nodes: list[float] = []
+
+    with open(file_path, 'r') as f:
         for line in f:
-            parts = line.split()
+            parts: list[str] = line.split()
             for part in parts:
-                x_val = float(part)
+                x_val: float = float(part)
                 x_nodes.append(x_val)
+
     x_nodes.sort()
+
     for node in x_nodes:
-        y = function(node)
+        y: float = function(node)
         y_nodes.append(y)
+
     return x_nodes, y_nodes

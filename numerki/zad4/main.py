@@ -1,6 +1,7 @@
 from horner import *
 from simpson import *
 from Czebyszew import *
+import math
 
 FUNKCJE = {
     "1": {
@@ -12,14 +13,18 @@ FUNKCJE = {
         "coeffs": [2.0, -1.0, 3.0, -1.0]
     },
     "3": {
-        "opis": "f(x) = x^5 + 4x^4 - 2x^2 + 1",
-        "coeffs": [1.0, 4.0, 0.0, -2.0, 0.0, 1.0]
+        "opis": "f(x) = sin(x) + 2",
+        "func": lambda x: math.sin(x) + 2
+    },
+    "4": {
+        "opis": "f(x) = exp(x)",
+        "func": lambda x: math.exp(x)
     }
 }
 
 def main():
     for funkcja in FUNKCJE:
-        print(f"{funkcja}. {FUNKCJE[funkcja]["opis"]}")
+        print(f"{funkcja}. {FUNKCJE[funkcja]['opis']}")
     is_correct = False
     while not is_correct:
         choice = input("Wybierz numer: ")
@@ -27,9 +32,13 @@ def main():
             is_correct = True
         else:
             print("Nie ma takiej opcji!")
-    polynomial_coeffs = FUNKCJE[choice]["coeffs"]
-    length = len(polynomial_coeffs)
-    function = lambda x: horner(x, polynomial_coeffs, length)
+    num = int(choice)
+    if num == 1 or num == 2:
+        polynomial_coeffs = FUNKCJE[choice]["coeffs"]
+        length = len(polynomial_coeffs)
+        function = lambda x: horner(x, polynomial_coeffs, length)
+    else:
+        function = FUNKCJE[choice]["func"]
     is_valid = False
     while not is_valid:
         user_input = input("Proszę podać dokładność np. 0.0001: ")

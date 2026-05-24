@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import math
 from horner import horner
+from aproksymacja import aproksymacja
 
 FUNCTIONS = {
     "1": {
@@ -28,12 +29,11 @@ FUNCTIONS = {
 def main():
     is_function = False
     while not is_function:
-        for function in FUNCTIONS:
-            print(f"{function}. {FUNCTIONS[function]["opis"]}")
+        for key in FUNCTIONS:
+            print(f"{key}. {FUNCTIONS[key]["opis"]}")
         user_func = input("Proszę wybrać funkcję: 1-5 ")
         if user_func in FUNCTIONS:
             is_function = True
-
     function = FUNCTIONS[user_func]["f"]
     is_interval = False
     a, b = 0.0, 0.0
@@ -45,9 +45,8 @@ def main():
         else:
             print("Niepoprawny przedział")
     is_nodes = False
-    nodes_num = 0
     while not is_nodes:
-        nodes_num = int(input("Podaj ilość węzłów"))
+        nodes_num = int(input("Podaj ilość węzłów: "))
         if nodes_num > 0:
             is_nodes = True
     f_mapped = lambda x: function(((b - a) * x + (a + b)) / 2.0)
@@ -57,15 +56,18 @@ def main():
         print("Wybierz tryb pracy programu:")
         print("1. Podaj stopień wielomianu")
         print("2. Podaj oczekiwany błąd")
-        mode = int(input("Wybór (1/2): "))
+        mode = int(input("Wybór: "))
         if mode == 1 or mode == 2:
             is_mode = True
         else:
-            print("Niepoprawny wybór.")
+            print("Niepoprawny wybór")
     score = []
+    points_x = []
+    points_y = []
+    error = 0.0
     if mode == 1:
         degree = int(input("Podaj stopień wielomianu aproksymującego: "))
-        #Liczenie aproksymacji
+        score, points_x, points_y, error = aproksymacja(f_mapped, degree, nodes_num)
         print(f"Maksymalny błąd aproksymacji wynosi: {error}")
     else:
         accuracy = float(input("Podaj oczekiwany maksymalny błąd: "))
@@ -74,15 +76,35 @@ def main():
         is_finised = False
 
         while not is_finised and degree <= max_degree:
-            #Liczenie aproksymacji
+            score, points_x, points_y, error = aproksymacja(f_mapped, degree, nodes_num)
             if error <= accuracy:
                 is_finised = True
                 print(f"Wymagana dokładność osiągnięta dla wielomianu stopnia: {degree}")
+                print(f"Maksymalny błąd aproksymacji wynosi: {error}")
             else:
+
                 degree += 1
         if not is_finised:
             print("Nie ma rozwiązania")
 
+    #Rysowanie grafu
+    real_x = []
+    real_y = []
+    i = 0
+    while i < len(points_x):
+        t = ((b - a) * points_x[i] + (a + b)) / 2.0
+        real_x.append(t)
+        real_y.append(function(t))
+        i += 1
+    plt.figure(figsize=(10, 6))
+    plt.plot(real_x, real_y, label="Funkcja oryginalna", color="blue", linewidth=2)
+    plt.plot(real_x, points_y, label=f"Aproksymacja (stopień {degree})", color="red", linestyle="--")
+    plt.title("Aproksymacja średniokwadratowa wielomianami Czebyszewa")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 if __name__ == "__main__":
     main()

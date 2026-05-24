@@ -1,6 +1,6 @@
 from math import pi, cos
 
-def gauss_chebyshev(function, n: int) -> float:
+def gauss_czebyszew(function, n: int) -> float:
     total_sum: float = 0.0
     weight: float = pi / n
     for i in range(1, n + 1):

@@ -4,15 +4,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.MessageDigest;
 
-public class Schnorr{
+public class Schnorr {
     //--Te trzy parametry są podawane do publicznej wiadomości --
-    // p i q to liczby pierwsze
     public BigInteger p; //używana jako mod p
-    //bardzo duża liczba p > 2^512
     public BigInteger q; //q > 2^140
     public BigInteger h; // nierówne 1, h^q = 1 mod p
-    //Trzeba znaleźć takie h, żeby spełniało powyższy warunek
-    //Służy jako generator do operacji potęgowania w tym algorytmie
 
     private SecureRandom randomNum;
     private BigInteger a; //klucz prywatny, liczba 1 < a < p-1
@@ -31,11 +27,7 @@ public class Schnorr{
         }
         BigInteger random;
         do {
-            // Tworzymy liczbę o długości bitowej odpowiadającej limitowi
             random = new BigInteger(limit.bitLength(), randomNum);
-            // Warunek: 0 < randomNum < limit
-            // (ponieważ nasz limit to q, a wzór mówi r <= q-1,
-            // to r musi być po prostu mniejsze od q i większe od 0)
         } while (random.compareTo(BigInteger.ONE) <= 0 || random.compareTo(limit) >= 0);
 
         return random;
@@ -47,6 +39,7 @@ public class Schnorr{
         BigInteger v = num.modInverse(p);
         return v; //Public key v =(h^a)^-1 mod p
     }
+
     private byte[] concatenate(BigInteger M, BigInteger X) {
         byte[] mBytes = M.toByteArray();
         byte[] xBytes = X.toByteArray();
@@ -56,10 +49,9 @@ public class Schnorr{
         return combined;
     }
 
-    public BigInteger[] generateSignature(String message) throws NoSuchAlgorithmException {
-        byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+    // GŁÓWNA METODA PODPISUJĄCA (Dla dowolnych bajtów - np. plików)
+    public BigInteger[] generateSignature(byte[] messageBytes) throws NoSuchAlgorithmException {
         BigInteger M = new BigInteger(1, messageBytes);
-        //NoSuchAlgorithmException, żeby nie wyrzucał błędu
         BigInteger r = generateSecureRandom(q); //generowanie random r
         BigInteger X = h.modPow(r, p); //commitment  h^r mod p
         byte[] combined = concatenate(M, X); //konkatenacja MX
@@ -70,8 +62,15 @@ public class Schnorr{
         return new BigInteger[] { s1, s2 };
     }
 
-    public boolean verifySignature(String message, BigInteger[] signature, BigInteger v) throws NoSuchAlgorithmException {
-        BigInteger M = new BigInteger(1, message.getBytes(StandardCharsets.UTF_8));
+    // METODA POMOCNICZA DLA TEKSTU
+    public BigInteger[] generateSignature(String message) throws NoSuchAlgorithmException {
+        byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+        return generateSignature(messageBytes);
+    }
+
+    // GŁÓWNA METODA WERYFIKUJĄCA (Dla dowolnych bajtów - np. plików)
+    public boolean verifySignature(byte[] messageBytes, BigInteger[] signature, BigInteger v) throws NoSuchAlgorithmException {
+        BigInteger M = new BigInteger(1, messageBytes);
         BigInteger s1 = signature[0];
         BigInteger s2 = signature[1];
         // Z = (h^s2 * v^s1) mod p
@@ -86,4 +85,8 @@ public class Schnorr{
         return expectedS1.equals(s1); //prawda jeśli są sobie równe
     }
 
+    // METODA POMOCNICZA DLA TEKSTU
+    public boolean verifySignature(String message, BigInteger[] signature, BigInteger v) throws NoSuchAlgorithmException {
+        return verifySignature(message.getBytes(StandardCharsets.UTF_8), signature, v);
+    }
 }

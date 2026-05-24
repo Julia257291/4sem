@@ -6,7 +6,10 @@ import java.security.MessageDigest;
 
 public class Schnorr {
     //--Te trzy parametry są podawane do publicznej wiadomości --
-    // p i q to liczby pierwsze
+<<<<<<< HEAD
+    // p - liczba pierwsza
+=======
+>>>>>>> schnorrgui
     public BigInteger p; //używana jako mod p
     public BigInteger q; //q > 2^140
     public BigInteger h; // nierówne 1, h^q = 1 mod p
@@ -29,7 +32,14 @@ public class Schnorr {
         BigInteger random;
         do {
             random = new BigInteger(limit.bitLength(), randomNum);
+<<<<<<< HEAD
+            // Warunek: 0 < randomNum < limit
+            // (ponieważ nasz limit to q, a wzór mówi r <= q-1,
+            // to r musi być po prostu mniejsze od q i większe od 0)
         } while (random.compareTo(min) <= 0 || random.compareTo(limit) >= 0);
+=======
+        } while (random.compareTo(BigInteger.ONE) <= 0 || random.compareTo(limit) >= 0);
+>>>>>>> schnorrgui
 
         return random;
     }
@@ -50,10 +60,17 @@ public class Schnorr {
         return combined;
     }
 
+<<<<<<< HEAD
+    public BigInteger[] generateSignature(byte[] messageBytes) throws NoSuchAlgorithmException {
+        BigInteger M = new BigInteger(1, messageBytes);
+        //NoSuchAlgorithmException, żeby nie wyrzucał błędu
+        BigInteger r = generateSecureRandom(BigInteger.ZERO, q); //generowanie random r
+=======
     // GŁÓWNA METODA PODPISUJĄCA (Dla dowolnych bajtów - np. plików)
     public BigInteger[] generateSignature(byte[] messageBytes) throws NoSuchAlgorithmException {
         BigInteger M = new BigInteger(1, messageBytes);
-        BigInteger r = generateSecureRandom(BigInteger.ZERO, q); //generowanie random r
+        BigInteger r = generateSecureRandom(q); //generowanie random r
+>>>>>>> schnorrgui
         BigInteger X = h.modPow(r, p); //commitment  h^r mod p
         byte[] combined = concatenate(M, X); //konkatenacja MX
         MessageDigest hashAlgorithm = MessageDigest.getInstance("SHA-256");
@@ -63,6 +80,8 @@ public class Schnorr {
         return new BigInteger[] { s1, s2 };
     }
 
+<<<<<<< HEAD
+=======
     // METODA POMOCNICZA DLA TEKSTU
     public BigInteger[] generateSignature(String message) throws NoSuchAlgorithmException {
         byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
@@ -70,6 +89,7 @@ public class Schnorr {
     }
 
     // GŁÓWNA METODA WERYFIKUJĄCA (Dla dowolnych bajtów - np. plików)
+>>>>>>> schnorrgui
     public boolean verifySignature(byte[] messageBytes, BigInteger[] signature, BigInteger v) throws NoSuchAlgorithmException {
         BigInteger M = new BigInteger(1, messageBytes);
         BigInteger s1 = signature[0];

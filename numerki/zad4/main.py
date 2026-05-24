@@ -1,6 +1,6 @@
 from horner import *
 from simpson import *
-from Czebyszew import *
+from czebyszew import *
 import math
 
 FUNKCJE = {
@@ -14,10 +14,10 @@ FUNKCJE = {
     },
     "3": {
         "opis": "f(x) = sin(x) + 2",
-        "func": lambda x: math.sin(x) + 2
+        "func": lambda x: math.sin(x)
     },
     "4": {
-        "opis": "f(x) = exp(x)",
+        "opis": "f(x) = e^x",
         "func": lambda x: math.exp(x)
     }
 }
@@ -51,7 +51,7 @@ def main():
 
     nodes_counts = [2, 3, 4, 5]
     for n in nodes_counts:
-        score = gauss_chebyshev(function, n)
+        score = gauss_czebyszew(function, n)
         print(f"Wynik dla {n} węzłów: {score}")
 
     # Wyświetlenie wyników

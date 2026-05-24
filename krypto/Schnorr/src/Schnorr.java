@@ -6,7 +6,7 @@ import java.security.MessageDigest;
 
 public class Schnorr{
     //--Te trzy parametry są podawane do publicznej wiadomości --
-    // p i q to liczby pierwsze
+    // p - liczba pierwsza
     public BigInteger p; //używana jako mod p
     //bardzo duża liczba p > 2^512
     public BigInteger q; //q > 2^140
@@ -22,10 +22,10 @@ public class Schnorr{
         this.q = q;
         this.h = h;
         this.randomNum = new SecureRandom();
-        this.a = generateSecureRandom(q);
+        this.a = generateSecureRandom(BigInteger.ONE, p.subtract(BigInteger.ONE));
     }
 
-    private BigInteger generateSecureRandom(BigInteger limit) {
+    private BigInteger generateSecureRandom(BigInteger min, BigInteger limit) {
         if (this.randomNum == null) {
             this.randomNum = new SecureRandom();
         }
@@ -36,7 +36,7 @@ public class Schnorr{
             // Warunek: 0 < randomNum < limit
             // (ponieważ nasz limit to q, a wzór mówi r <= q-1,
             // to r musi być po prostu mniejsze od q i większe od 0)
-        } while (random.compareTo(BigInteger.ONE) <= 0 || random.compareTo(limit) >= 0);
+        } while (random.compareTo(min) <= 0 || random.compareTo(limit) >= 0);
 
         return random;
     }
@@ -56,11 +56,10 @@ public class Schnorr{
         return combined;
     }
 
-    public BigInteger[] generateSignature(String message) throws NoSuchAlgorithmException {
-        byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+    public BigInteger[] generateSignature(byte[] messageBytes) throws NoSuchAlgorithmException {
         BigInteger M = new BigInteger(1, messageBytes);
         //NoSuchAlgorithmException, żeby nie wyrzucał błędu
-        BigInteger r = generateSecureRandom(q); //generowanie random r
+        BigInteger r = generateSecureRandom(BigInteger.ZERO, q); //generowanie random r
         BigInteger X = h.modPow(r, p); //commitment  h^r mod p
         byte[] combined = concatenate(M, X); //konkatenacja MX
         MessageDigest hashAlgorithm = MessageDigest.getInstance("SHA-256");
@@ -70,8 +69,8 @@ public class Schnorr{
         return new BigInteger[] { s1, s2 };
     }
 
-    public boolean verifySignature(String message, BigInteger[] signature, BigInteger v) throws NoSuchAlgorithmException {
-        BigInteger M = new BigInteger(1, message.getBytes(StandardCharsets.UTF_8));
+    public boolean verifySignature(byte[] messageBytes, BigInteger[] signature, BigInteger v) throws NoSuchAlgorithmException {
+        BigInteger M = new BigInteger(1, messageBytes);
         BigInteger s1 = signature[0];
         BigInteger s2 = signature[1];
         // Z = (h^s2 * v^s1) mod p

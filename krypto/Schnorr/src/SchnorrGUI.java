@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -28,7 +30,7 @@ public class SchnorrGUI extends JFrame {
     public SchnorrGUI() {
         // Konfiguracja głównego okna
         setTitle("Podpis Cyfrowy - Algorytm Schnorra");
-        setSize(800, 750);
+        setSize(850, 750); // Lekko zwiększona szerokość, aby pomieścić nowy przycisk
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
@@ -98,12 +100,18 @@ public class SchnorrGUI extends JFrame {
         JPanel actionPanel = new JPanel(new FlowLayout());
         JButton signBtn = new JButton("Generuj Podpis");
         JButton verifyBtn = new JButton("Weryfikuj Podpis");
+        JButton saveBtn = new JButton("Zapisz do pliku");
+        JButton loadBtn = new JButton("Wczytaj z pliku"); // <-- NOWY PRZYCISK
 
         signBtn.addActionListener(e -> signAction());
         verifyBtn.addActionListener(e -> verifyAction());
+        saveBtn.addActionListener(e -> saveParametersAndSignature());
+        loadBtn.addActionListener(e -> loadParametersAndSignature()); // <-- AKCJA DLA NOWEGO PRZYCISKU
 
         actionPanel.add(signBtn);
         actionPanel.add(verifyBtn);
+        actionPanel.add(saveBtn);
+        actionPanel.add(loadBtn); // <-- DODANIE DO PANELU
 
         JPanel resultsPanel = new JPanel(new GridLayout(3, 2, 5, 5));
         resultsPanel.setBorder(BorderFactory.createTitledBorder("Klucz Publiczny i Podpis"));
@@ -178,10 +186,14 @@ public class SchnorrGUI extends JFrame {
             BigInteger h = new BigInteger(hStr);
 
             schnorr = new Schnorr(p, q, h);
-            currentPublicKey = schnorr.generatePublicKey();
+            currentPublicKey = null;
 
-            publicKeyField.setText(currentPublicKey.toString());
-            publicKeyField.setCaretPosition(0);
+            pField.setText(p.toString()); pField.setCaretPosition(0);
+            qField.setText(q.toString()); qField.setCaretPosition(0);
+            hField.setText(h.toString()); hField.setCaretPosition(0);
+            publicKeyField.setText("");
+            s1Field.setText("");
+            s2Field.setText("");
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Parametry p, q, h muszą być poprawnymi liczbami całkowitymi!", "Błąd formatu", JOptionPane.ERROR_MESSAGE);
@@ -195,9 +207,8 @@ public class SchnorrGUI extends JFrame {
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             selectedFile = fileChooser.getSelectedFile();
-            // Aktualizacja napisu ze ścieżką do pliku
             fileStatusLabel.setText("Wybrany plik: " + selectedFile.getAbsolutePath());
-            fileStatusLabel.setForeground(new Color(0, 128, 0)); // Zmiana koloru tekstu na zielony po udanym wyborze
+            fileStatusLabel.setForeground(new Color(0, 128, 0));
         }
     }
 
@@ -206,7 +217,6 @@ public class SchnorrGUI extends JFrame {
             BigInteger[] signature;
             currentPublicKey = schnorr.generatePublicKey();
             if (tabbedPane.getSelectedIndex() == 0) {
-                // Tryb TEKST
                 String message = messageArea.getText();
                 if (message.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Wiadomość nie może być pusta!", "Ostrzeżenie", JOptionPane.WARNING_MESSAGE);
@@ -214,7 +224,6 @@ public class SchnorrGUI extends JFrame {
                 }
                 signature = schnorr.generateSignature(message);
             } else {
-                // Tryb PLIK
                 if (selectedFile == null || !selectedFile.exists()) {
                     JOptionPane.showMessageDialog(this, "Wybierz poprawny plik!", "Ostrzeżenie", JOptionPane.WARNING_MESSAGE);
                     return;
@@ -256,7 +265,6 @@ public class SchnorrGUI extends JFrame {
             boolean isValid = false;
 
             if (tabbedPane.getSelectedIndex() == 0) {
-                // Tryb TEKST
                 String message = messageArea.getText();
                 if (message.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Wiadomość tekstowa jest pusta!", "Ostrzeżenie", JOptionPane.WARNING_MESSAGE);
@@ -264,7 +272,6 @@ public class SchnorrGUI extends JFrame {
                 }
                 isValid = schnorr.verifySignature(message, signature, v);
             } else {
-                // Tryb PLIK
                 if (selectedFile == null || !selectedFile.exists()) {
                     JOptionPane.showMessageDialog(this, "Wybierz poprawny plik do weryfikacji!", "Ostrzeżenie", JOptionPane.WARNING_MESSAGE);
                     return;
@@ -285,6 +292,87 @@ public class SchnorrGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Błąd odczytu pliku: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Błąd weryfikacji: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void saveParametersAndSignature() {
+        if (pField.getText().isEmpty() || s1Field.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Brak danych do zapisania! Wygeneruj najpierw parametry i podpis.", "Ostrzeżenie", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Zapisz parametry i podpis");
+        fileChooser.setSelectedFile(new File("schnorr_data.txt"));
+
+        int userSelection = fileChooser.showSaveDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+
+            try (java.io.PrintWriter writer = new java.io.PrintWriter(fileToSave)) {
+                writer.println(pField.getText().trim());
+                writer.println(qField.getText().trim());
+                writer.println(hField.getText().trim());
+                writer.println(publicKeyField.getText().trim());
+                writer.println(s1Field.getText().trim());
+                writer.println(s2Field.getText().trim());
+
+                JOptionPane.showMessageDialog(this, "Dane zostały pomyślnie zapisane do pliku!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Błąd podczas zapisu do pliku: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    // --- NOWA METODA: Wczytywanie danych analogiczne do zapisu ---
+    private void loadParametersAndSignature() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Wczytaj parametry i podpis");
+
+        int userSelection = fileChooser.showOpenDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToLoad = fileChooser.getSelectedFile();
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileToLoad))) {
+                String pStr = reader.readLine();
+                String qStr = reader.readLine();
+                String hStr = reader.readLine();
+                String vStr = reader.readLine();
+                String s1Str = reader.readLine();
+                String s2Str = reader.readLine();
+
+                // Sprawdzenie czy plik zawiera wystarczającą liczbę linii
+                if (pStr == null || qStr == null || hStr == null || vStr == null || s1Str == null || s2Str == null) {
+                    JOptionPane.showMessageDialog(this, "Plik ma nieprawidłowy format lub jest uszkodzony!", "Błąd struktury pliku", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Parsowanie i inicjalizacja obiektu Schnorr
+                BigInteger p = new BigInteger(pStr.trim());
+                BigInteger q = new BigInteger(qStr.trim());
+                BigInteger h = new BigInteger(hStr.trim());
+
+                schnorr = new Schnorr(p, q, h);
+                currentPublicKey = new BigInteger(vStr.trim());
+
+                // Uaktualnienie pól tekstowych w GUI
+                pField.setText(pStr.trim()); pField.setCaretPosition(0);
+                qField.setText(qStr.trim()); qField.setCaretPosition(0);
+                hField.setText(hStr.trim()); hField.setCaretPosition(0);
+
+                publicKeyField.setText(vStr.trim()); publicKeyField.setCaretPosition(0);
+                s1Field.setText(s1Str.trim()); s1Field.setCaretPosition(0);
+                s2Field.setText(s2Str.trim()); s2Field.setCaretPosition(0);
+
+                JOptionPane.showMessageDialog(this, "Dane zostały pomyślnie wczytane z pliku!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Wczytywane dane muszą być poprawnymi liczbami całkowitymi!", "Błąd formatu", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Błąd podczas odczytu z pliku: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

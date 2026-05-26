@@ -14,12 +14,47 @@ public class Schnorr {
     private SecureRandom randomNum;
     private BigInteger a; //klucz prywatny, liczba 1 < a < p-1
 
+    // Konstruktor do całkowicie automatycznego generowania parametrów od zera
+    public Schnorr() {
+        this.randomNum = new SecureRandom();
+        generateSystemParameters();
+        this.a = generateSecureRandom(BigInteger.ONE, p.subtract(BigInteger.ONE));
+    }
+    // Konstruktor do weryfikacji podpisów
     public Schnorr(BigInteger p, BigInteger q, BigInteger h){
         this.p = p;
         this.q = q;
         this.h = h;
         this.randomNum = new SecureRandom();
-        this.a = generateSecureRandom(BigInteger.ONE, p.subtract(BigInteger.ONE));
+        this.a = BigInteger.ONE;
+    }
+    //Konstruktor do wczytywania własnego, wcześniej zapisanego profilu
+    public Schnorr(BigInteger p, BigInteger q, BigInteger h, BigInteger a) {
+        this.p = p;
+        this.q = q;
+        this.h = h;
+        this.a = a;
+        this.randomNum = new SecureRandom();
+    }
+
+    public BigInteger getPrivateKey() {
+        return this.a;
+    }
+    // Logika wyliczania p, q, h
+    private void generateSystemParameters() {
+        // q > 2^140
+        this.q = BigInteger.probablePrime(140, randomNum);
+        BigInteger multiplier;
+        // p > 2^512
+        do {
+            multiplier = new BigInteger(352, randomNum);
+            this.p = q.multiply(multiplier).add(BigInteger.ONE);
+        } while (!p.isProbablePrime(100));
+        // h != 1, h^q = 1 mod p
+        do {
+            BigInteger g = new BigInteger(p.bitLength() - 1, randomNum).add(BigInteger.TWO);
+            this.h = g.modPow(multiplier, p);
+        } while (h.equals(BigInteger.ONE));
     }
 
     private BigInteger generateSecureRandom(BigInteger min, BigInteger limit) {

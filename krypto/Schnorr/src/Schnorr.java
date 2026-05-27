@@ -21,9 +21,9 @@ public class Schnorr {
         this.a = generateSecureRandom(BigInteger.ONE, p.subtract(BigInteger.ONE));
     }
     // Konstruktor do weryfikacji podpisów
-    public Schnorr(BigInteger p, BigInteger q, BigInteger h){
+    public Schnorr(BigInteger p, BigInteger h){
         this.p = p;
-        this.q = q;
+        this.q = BigInteger.ONE;
         this.h = h;
         this.randomNum = new SecureRandom();
         this.a = BigInteger.ONE;
@@ -47,7 +47,7 @@ public class Schnorr {
         BigInteger multiplier;
         // p > 2^512
         do {
-            multiplier = new BigInteger(352, randomNum);
+            multiplier = new BigInteger(372, randomNum);
             this.p = q.multiply(multiplier).add(BigInteger.ONE);
         } while (!p.isProbablePrime(100));
         // h != 1, h^q = 1 mod p

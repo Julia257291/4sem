@@ -51,9 +51,9 @@ public class SchnorrGUI extends JFrame {
     private JPanel SigningTab() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        // --- PANEL GÓRNY: Parametry systemu (p, q, h) ---
+        // --- PANEL GÓRNY: Parametry systemu (p, q, h, a) ---
         JPanel paramsContainer = new JPanel(new BorderLayout(5, 5));
-        paramsContainer.setBorder(BorderFactory.createTitledBorder("Parametry Systemu (p, q, h)"));
+        paramsContainer.setBorder(BorderFactory.createTitledBorder("Parametry oraz klucz prywatny"));
 
         JPanel paramsFields = new JPanel(new GridLayout(4, 2, 5, 5));
         pField = new JTextField();
@@ -67,8 +67,8 @@ public class SchnorrGUI extends JFrame {
         paramsFields.add(new JLabel("Klucz (a):")); paramsFields.add(aField); // Dodanie do panelu
 
         JPanel paramsBtns = new JPanel(new FlowLayout());
-        JButton generateParamsBtn = new JButton("Generuj losowe p, q, h");
-        JButton applyParamsBtn = new JButton("Zastosuj wpisane p, q, h");
+        JButton generateParamsBtn = new JButton("Generuj losowe p, q, h, a");
+        JButton applyParamsBtn = new JButton("Zastosuj wpisane p, q, h, a");
 
         generateParamsBtn.addActionListener(e -> initializeSchnorr());
         applyParamsBtn.addActionListener(e -> applyCustomParameters());
@@ -117,9 +117,9 @@ public class SchnorrGUI extends JFrame {
 
         JPanel actionPanel = new JPanel(new FlowLayout());
         JButton signBtn = new JButton("Generuj Podpis");
-        JButton saveKeysBtn = new JButton("Zapisz swoje klucze");
+        JButton saveKeysBtn = new JButton("Zapisz parametry do podpisu");
         JButton exportCertBtn = new JButton("Eksportuj dla odbiorcy");
-        JButton loadKeysBtn = new JButton("Wczytaj swoje klucze");
+        JButton loadKeysBtn = new JButton("Wczytaj parametry do podpisu");
 
         signBtn.addActionListener(e -> signAction());
         saveKeysBtn.addActionListener(e -> saveMyKeys());
@@ -159,7 +159,7 @@ public class SchnorrGUI extends JFrame {
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         JPanel verifyParamsPanel = new JPanel(new GridLayout(5, 2, 5, 5));
-        verifyParamsPanel.setBorder(BorderFactory.createTitledBorder("Dane wymagane do weryfikacji (Brak q oraz a)"));
+        verifyParamsPanel.setBorder(BorderFactory.createTitledBorder("Dane wymagane do weryfikacji"));
         verifyPField = new JTextField(); verifyHField = new JTextField(); verifyVField = new JTextField(); verifyS1Field = new JTextField(); verifyS2Field = new JTextField();
         verifyParamsPanel.add(new JLabel("p:")); verifyParamsPanel.add(verifyPField);
         verifyParamsPanel.add(new JLabel("h:")); verifyParamsPanel.add(verifyHField);
@@ -192,8 +192,7 @@ public class SchnorrGUI extends JFrame {
         // ZMIANA: Zgrupowanie przycisków
         JPanel buttonsPanel = new JPanel(new FlowLayout());
 
-        JButton verifyBtn = new JButton("WERYFIKUJ PODPIS");
-        verifyBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        JButton verifyBtn = new JButton("Weryfikuj podpis");
         verifyBtn.addActionListener(e -> verifyAction());
 
         JButton loadVerifyBtn = new JButton("Wczytaj certyfikat z pliku");
@@ -336,7 +335,6 @@ public class SchnorrGUI extends JFrame {
     private void verifyAction() {
         String pStr = verifyPField.getText().trim();
         String hStr = verifyHField.getText().trim();
-        // ZMIANA: używamy zmiennych z zakładki weryfikacji
         String vStr = verifyVField.getText().trim();
         String s1Str = verifyS1Field.getText().trim();
         String s2Str = verifyS2Field.getText().trim();
@@ -356,10 +354,8 @@ public class SchnorrGUI extends JFrame {
 
             boolean isValid = false;
 
-            // ZMIANA: tworzymy obiekt tylko do weryfikacji (q i a ustawiamy na 1)
-            Schnorr verifier = new Schnorr(p, BigInteger.ONE, h, BigInteger.ONE);
+            Schnorr verifier = new Schnorr(p, h);
 
-            // ZMIANA: używamy wewnętrznej zakładki weryfikacyjnej i jej pól
             if (verifyTabbedPane.getSelectedIndex() == 0) {
                 String message = verifyMessageArea.getText();
                 if (message.isEmpty()) {
@@ -379,7 +375,7 @@ public class SchnorrGUI extends JFrame {
             if (isValid) {
                 JOptionPane.showMessageDialog(this, "Podpis jest prawidłowy!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Podpis jest NIEPRAWIDŁOWY!", "Błąd weryfikacji", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Podpis jest nieprawidłowy!", "Błąd weryfikacji", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (NumberFormatException ex) {
@@ -398,7 +394,7 @@ public class SchnorrGUI extends JFrame {
         }
 
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Zapisz swoje tajne klucze (p, q, h, a)");
+        fileChooser.setDialogTitle("Zapisz parametry do podpisu oraz klucz prywatny");
         fileChooser.setSelectedFile(new File("moje_klucze.txt"));
 
         if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -407,7 +403,7 @@ public class SchnorrGUI extends JFrame {
                 writer.println(qField.getText().trim());
                 writer.println(hField.getText().trim());
                 writer.println(aField.getText().trim());
-                JOptionPane.showMessageDialog(this, "Twoje klucze zostały zapisane pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Parametry do podpisu zostały zapisane pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Błąd podczas zapisu: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
             }
@@ -440,7 +436,7 @@ public class SchnorrGUI extends JFrame {
 
     private void loadMyKeys() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Wczytaj swoje klucze");
+        fileChooser.setDialogTitle("Wczytaj parametry do ppodpisu oraz klucz prywatny");
 
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try (BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()))) {
@@ -471,7 +467,7 @@ public class SchnorrGUI extends JFrame {
                 s1Field.setText("");
                 s2Field.setText("");
 
-                JOptionPane.showMessageDialog(this, "Twoje klucze wczytane pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Parametry do podpisu wczytane pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
 
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Wczytywane dane muszą być poprawnymi liczbami całkowitymi!", "Błąd formatu", JOptionPane.ERROR_MESSAGE);

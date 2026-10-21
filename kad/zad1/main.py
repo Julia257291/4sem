@@ -34,15 +34,26 @@ get_statistics('sepal width', sepal_width)
 get_statistics('petal length', petal_length)
 get_statistics('petal width', petal_width)
 
+
 def get_histogram_boxplot(attribute, title, x_name):
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
-    #Histogram
-    ax1.hist(attribute, edgecolor='black')
+
+    # Ustalamy stałą szerokość słupka (np. 0.5)
+    bin_width = 0.5
+    min_val = np.floor(attribute.min() / bin_width) * bin_width
+    max_val = np.ceil(attribute.max() / bin_width) * bin_width
+
+    # Tworzymy przedziały co 0.5 (np. 4.0, 4.5, 5.0, ..., 8.0)
+    bins = np.arange(min_val, max_val + bin_width, bin_width)
+
+    # Histogram
+    ax1.hist(attribute, bins=bins, edgecolor='black')
     ax1.set_title(title)
     ax1.set_xlabel(x_name)
     ax1.set_ylabel("Liczebność")
+    ax1.set_xticks(bins)
 
-    #Boxplot
+    # Boxplot (bez zmian)
     setosa = df[df['specie'] == 0][attribute.name]
     versicolor = df[df['specie'] == 1][attribute.name]
     virginica = df[df['specie'] == 2][attribute.name]

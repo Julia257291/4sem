@@ -36,24 +36,20 @@ get_statistics('petal width', petal_width)
 
 
 def get_histogram_boxplot(attribute, title, x_name):
-    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(8, 4))
 
-    # Ustalamy stałą szerokość słupka (np. 0.5)
     bin_width = 0.5
     min_val = np.floor(attribute.min() / bin_width) * bin_width
     max_val = np.ceil(attribute.max() / bin_width) * bin_width
 
-    # Tworzymy przedziały co 0.5 (np. 4.0, 4.5, 5.0, ..., 8.0)
     bins = np.arange(min_val, max_val + bin_width, bin_width)
 
-    # Histogram
     ax1.hist(attribute, bins=bins, edgecolor='black')
     ax1.set_title(title)
     ax1.set_xlabel(x_name)
     ax1.set_ylabel("Liczebność")
     ax1.set_xticks(bins)
 
-    # Boxplot (bez zmian)
     setosa = df[df['specie'] == 0][attribute.name]
     versicolor = df[df['specie'] == 1][attribute.name]
     virginica = df[df['specie'] == 2][attribute.name]
@@ -94,9 +90,10 @@ def get_scatter(attribute_x, attribute_y, name_x, name_y):
 
     plt.tight_layout()
     plt.show()
-get_scatter(sepal_width, sepal_length, "Szerokość działki kielicha (cm)", "Długość działki kielicha (cm)")
-get_scatter(petal_length, sepal_length, "Długość płatka (cm)", "Długość działki kielicha (cm)")
-get_scatter(petal_width, sepal_length, "Szerokość płatka (cm)", "Długość działki kielicha (cm)")
-get_scatter(petal_length, sepal_width, "Długość płatka (cm)", "Szerokość działki kielicha (cm)")
-get_scatter(petal_width, sepal_width, "Szerokość płatka (cm)", "Szerokość działki kielicha (cm)")
-get_scatter(petal_width, petal_length, "Szerokość płatka (cm)", "Długość płatka (cm)")
+
+get_scatter(sepal_length, sepal_width, "Długość działki kielicha (cm)", "Szerokość działki kielicha (cm)")
+get_scatter(sepal_length, petal_length, "Długość działki kielicha (cm)", "Długość płatka (cm)")
+get_scatter(sepal_length, petal_width, "Długość działki kielicha (cm)", "Szerokość płatka (cm)")
+get_scatter(sepal_width, petal_length, "Szerokość działki kielicha (cm)", "Długość płatka (cm)")
+get_scatter(sepal_width, petal_width, "Szerokość działki kielicha (cm)", "Szerokość płatka (cm)")
+get_scatter(petal_length, petal_width, "Długość płatka (cm)", "Szerokość płatka (cm)")

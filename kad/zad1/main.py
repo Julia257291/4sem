@@ -4,7 +4,8 @@ import numpy as np
 from itertools import combinations
 
 df = pd.read_csv('data1.csv', names=['sepal length', 'sepal width',
-                                     'petal length', 'petal width', 'specie'])
+                                                    'petal length', 'petal width',
+                                                    'specie'])
 
 species_names = {0: 'setosa', 1: 'versicolor', 2: 'virginica'}
 
@@ -14,20 +15,17 @@ petal_length = df['petal length']
 petal_width = df['petal width']
 specie = df['specie']
 
-# Table 1
+# Task 1
 num_species = specie.value_counts()
-
 num_species_percentage = round(num_species / len(specie) * 100, 1)
-
 for index in num_species.index:
     count = num_species[index]
     percentage = num_species_percentage[index]
     name = species_names[index]
     print(f"Gatunek {name}: {count} ({percentage}%)")
-
 print("----------------------------")
 
-# Table 2
+# Task 2
 labels = {
     'sepal length': 'Długość działki kielicha (cm)',
     'sepal width': 'Szerokość działki kielicha (cm)',
@@ -48,11 +46,12 @@ def get_statistics(name, data):
 
 for col_en, col_pl in labels.items():
     get_statistics(col_pl, df[col_en])
-
 print("----------------------------")
 
 # Task 3
-def get_histogram_boxplot(attribute, title, x_name, ax1, ax2):
+def get_histogram_boxplot(attribute, title, x_name, filename):
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 4))
+
     bin_width = 0.5
     min_val = np.floor(attribute.min() / bin_width) * bin_width
     max_val = np.ceil(attribute.max() / bin_width) * bin_width
@@ -70,23 +69,20 @@ def get_histogram_boxplot(attribute, title, x_name, ax1, ax2):
     virginica = df[df['specie'] == 2][attribute.name]
 
     ax2.boxplot([setosa, versicolor, virginica])
-    ax2.set_xticklabels(list(species_names.values()))
+    ax2.set_xticklabels([species_names[0], species_names[1], species_names[2]])
     ax2.set_xlabel('Gatunek')
     ax2.set_ylabel(x_name)
 
-fig3, axes3 = plt.subplots(nrows=4, ncols=2, figsize=(10, 12))
-fig3.subplots_adjust(hspace=0.6)
+    plt.tight_layout()
 
-get_histogram_boxplot(sepal_length, "Długość działki kielicha",
-                      "Długość (cm)", axes3[0, 0], axes3[0, 1])
-get_histogram_boxplot(sepal_width, "Szerokość działki kielicha",
-                      "Szerokość (cm)", axes3[1, 0], axes3[1, 1])
-get_histogram_boxplot(petal_length, "Długość płatka",
-                      "Długość (cm)", axes3[2, 0], axes3[2, 1])
-get_histogram_boxplot(petal_width, "Szerokość płatka",
-                      "Szerokość (cm)", axes3[3, 0], axes3[3, 1])
+    plt.savefig(filename)
+    plt.close()
 
-plt.savefig('wykres3')
+
+get_histogram_boxplot(sepal_length, "Długość działki kielicha", "Długość (cm)", "wykres3_1.png")
+get_histogram_boxplot(sepal_width, "Szerokość działki kielicha", "Szerokość (cm)", "wykres3_2.png")
+get_histogram_boxplot(petal_length, "Długość płatka", "Długość (cm)", "wykres3_3.png")
+get_histogram_boxplot(petal_width, "Szerokość płatka", "Szerokość (cm)", "wykres3_4.png")
 
 # Task 4
 def get_scatter(attribute_x, attribute_y, name_x, name_y, ax):
